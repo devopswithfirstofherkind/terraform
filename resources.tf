@@ -44,22 +44,20 @@ resource "aws_network_interface" "webserver-NIC" {
 }
 
 
+resource "aws_key_pair" "deployer" {
+  key_name   = "deployer"
+  public_key = var.public_key
+}
 
-resource "aws_instance" "mywebserver" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
-
-
-
-  network_interface {
-    network_interface_id = aws_network_interface.webserver-NIC.id
-    device_index         = 0
-  }
+resource "aws_instance" "mywebserverr" {
+  ami                         = data.aws_ami.ubuntu.id
+  instance_type               = "t2.small"
+  key_name                    = aws_key_pair.deployer.id
+  subnet_id                   = aws_subnet.webserver-subnet.id
+  associate_public_ip_address = true
 
 
 }
-
-
 
 
 resource "aws_s3_bucket" "s3" {
